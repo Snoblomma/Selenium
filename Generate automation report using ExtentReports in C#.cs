@@ -4,7 +4,9 @@ using AventStack.ExtentReports;
 using AventStack.ExtentReports.Reporter;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using OpenQA.Selenium;
 using System;
+using System.Drawing.Imaging;
 
 namespace ComparativeTests.Tests
 {
@@ -13,12 +15,15 @@ namespace ComparativeTests.Tests
         public static bool initialized = false;
         public static ExtentReports _extent;
         public static ExtentHtmlReporter htmlReporter;
+        protected ExtentTest _test;
+        public string dir;
+        public string fileName;
 
         [OneTimeSetUp]
         protected void Setup()
         {
-            var dir = TestContext.CurrentContext.TestDirectory + "\\";
-            var fileName = this.GetType().ToString() + "ComparativeTestsReport.html";
+            dir = TestContext.CurrentContext.TestDirectory + "\\";
+            fileName = "ComparativeTestsReport.html";
 
 
             if (initialized == false) {
@@ -33,7 +38,6 @@ namespace ComparativeTests.Tests
         [OneTimeTearDown]
         protected void TearDown()
         {
-            Console.Write("flush");
             _extent.Flush();
         }
 
@@ -47,9 +51,9 @@ namespace ComparativeTests.Tests
         public void AfterTest()
         {
             var status = TestContext.CurrentContext.Result.Outcome.Status;
-            var stacktrace = string.IsNullOrEmpty(TestContext.CurrentContext.Result.StackTrace)
+            var stacktrace = string.IsNullOrEmpty(TestContext.CurrentContext.Result.Message)
                     ? ""
-                    : string.Format("{0}", TestContext.CurrentContext.Result.StackTrace);
+                    : string.Format("{0}", TestContext.CurrentContext.Result.Message);
             Status logstatus;
 
             switch (status)
@@ -67,9 +71,19 @@ namespace ComparativeTests.Tests
                     logstatus = Status.Pass;
                     break;
             }
+            _test.Log(logstatus, "Test ended with " + logstatus + Environment.NewLine + stacktrace);
+        }
+    }
 
-            _test.Log(logstatus, "Test ended with " + logstatus + stacktrace);
-            _extent.Flush();
+    public class GetScreenShot
+    {
+        public static string Capture(IWebDriver driver, string screenShotName)
+        {
+            ITakesScreenshot ts = (ITakesScreenshot)driver;
+            Screenshot screenshot = ts.GetScreenshot();
+            string localpath = TestContext.CurrentContext.TestDirectory + "\\ReportScreenShots\\" + screenShotName + ".png"; ;
+            screenshot.SaveAsFile(localpath, ScreenshotImageFormat.Png);
+            return localpath;
         }
     }
 }
