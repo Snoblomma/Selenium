@@ -60,6 +60,10 @@ namespace ComparativeTests.Tests
             {
                 case TestStatus.Failed:
                     logstatus = Status.Fail;
+                    string oldScreenShotPath = GetScreenShot.Capture(OldSiteDriver, this.GetType().ToString() + "OldSiteScreenShot");
+                    string newScreenShotPath = GetScreenShot.Capture(NewSiteDriver, this.GetType().ToString() + "NewSiteScreenShot");
+                    _test.Log(Status.Debug, "Old website snapshot below: " + _test.AddScreenCaptureFromPath(oldScreenShotPath));
+                    _test.Log(Status.Debug, "New website snapshot below: " + _test.AddScreenCaptureFromPath(newScreenShotPath));
                     break;
                 case TestStatus.Inconclusive:
                     logstatus = Status.Warning;
