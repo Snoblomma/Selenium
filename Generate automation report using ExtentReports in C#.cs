@@ -50,6 +50,9 @@ namespace ComparativeTests.Tests
         [TearDown]
         public void AfterTest()
         {
+            _test.Log(Status.Debug, "Old website loading time: " + oldTime.Elapsed);
+            _test.Log(Status.Debug, "New website loading time: " + newTime.Elapsed);
+            
             var status = TestContext.CurrentContext.Result.Outcome.Status;
             var stacktrace = string.IsNullOrEmpty(TestContext.CurrentContext.Result.Message)
                     ? ""
