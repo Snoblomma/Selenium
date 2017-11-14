@@ -18,16 +18,19 @@ namespace ComparativeTests.Tests
         protected ExtentTest _test;
         public string dir;
         public string fileName;
+        public string config;
 
         [OneTimeSetUp]
         protected void Setup()
         {
             dir = TestContext.CurrentContext.TestDirectory + "\\";
+            config = dir + "..\\..\\";
             fileName = "ComparativeTestsReport.html";
 
 
             if (initialized == false) {
                 htmlReporter = new ExtentHtmlReporter(dir+fileName);
+                htmlReporter.LoadConfig(config + "extent-config.xml");
                 _extent = new ExtentReports();
                 _extent.AttachReporter(htmlReporter);
                 initialized = true;
